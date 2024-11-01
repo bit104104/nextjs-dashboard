@@ -8,8 +8,14 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+// 動態渲染API：用於以聲明方式選擇退出靜態渲染並指示不應快取特定元件。
+// v.15之後官方推薦noStore 改用 connection
+import { unstable_noStore as noStore } from 'next/cache'
+// 僅當需要動態渲染，且不使用常見的Dynamic API時才需要此功能。
+import { connection } from 'next/server'
 
 export async function fetchRevenue() {
+  await connection()
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -29,6 +35,7 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  await connection()
   try {
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -49,6 +56,7 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  await connection()
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
@@ -88,6 +96,7 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+  await connection()
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -120,6 +129,7 @@ export async function fetchFilteredInvoices(
 }
 
 export async function fetchInvoicesPages(query: string) {
+  await connection()
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -141,6 +151,7 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string) {
+  await connection()
   try {
     const data = await sql<InvoiceForm>`
       SELECT
@@ -184,6 +195,7 @@ export async function fetchCustomers() {
 }
 
 export async function fetchFilteredCustomers(query: string) {
+  await connection()
   try {
     const data = await sql<CustomersTableType>`
 		SELECT
