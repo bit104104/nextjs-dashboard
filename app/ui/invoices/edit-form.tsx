@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
+import { updateInvoice } from '@/app/lib/actions';
 
 export default function EditInvoiceForm({
   invoice,
@@ -17,8 +18,14 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
+  /*
+    updateInvoice.bind(null, invoice.id) => null 不改變this指向，並返回一個新函數
+    將 invoice.id 固定為更新操作的一部分，使得在表單提交時能夠方便地調用 
+  */ 
+  const updateInvoiceWithId =  updateInvoice.bind(null, invoice.id)
+  console.log('updateInvoiceWithId', updateInvoiceWithId)
   return (
-    <form>
+    <form action={ updateInvoiceWithId }>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">

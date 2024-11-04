@@ -68,6 +68,33 @@ export async function createInvoice(formData:FormData){
                           => 確保用戶看到的是最新的數據，提升用戶體驗
         redirect()：重定向到發票查詢頁
     */ 
-    // revalidatePath('/dashboard/invoices')
+    revalidatePath('/dashboard/invoices')
     redirect('/dashboard/invoices')
 } 
+
+// 不須驗證id、date
+const UpdateInvoice = FormSchema.omit({id:true, date:true})
+export async function updateInvoice(id:string, formData:FormData){
+    const {customerId, amount, status,} = UpdateInvoice.parse({
+        customerId:formData.get('customerId'),
+        amount:formData.get('amount'), 
+        status:formData.get('status')
+    })
+    const amountInCents = amount * 100
+
+    await sql `
+        UPDATE invoices SET 
+        customer_id = ${customerId},
+        amount = ${amountInCents},
+        status = ${status}
+        WHERE id = ${id}
+    `
+
+    revalidatePath('/dashboard/invoices')
+    redirect('/dashboard/invoices')
+}
+
+export async function deleteInvoice(id:string){
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    revalidatePath('/dashboard/invoices')
+}
