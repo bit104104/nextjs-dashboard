@@ -20,8 +20,6 @@ const FormSchema = z.object({
 
 // 3.創建新增發票的驗證器：基於驗證器FormSchema，omit()將id、date略過不驗證
 const CreateInvoice = FormSchema.omit({id:true, date:true})
-
-
 export async function createInvoice(formData:FormData){
     /* 1.取得表單數據-可在終端查看結果 => F12沒打印的原因在於，這是在服務器端執行的
        4.表單欄位檢查&驗證：使用驗證器CreateInvoice，解析(parse)取得的表單數據，進行驗證
@@ -36,6 +34,8 @@ export async function createInvoice(formData:FormData){
         也可如下合併寫入：
     */ 
     // 1.取得表單數據 + 4.表單欄位檢查&驗證
+    // 模擬1個error => 這時會導向error.tsx
+    // throw new Error('創建失敗')
     const {customerId, amount, status} = CreateInvoice.parse({
         customerId:formData.get('customerId'),
         amount:formData.get('amount'), 
@@ -49,17 +49,22 @@ export async function createInvoice(formData:FormData){
     const amountInCents = amount * 100
     const date = new Date().toISOString().split('T')[0]
 
-
-    // 6.將資料插入資料庫
-    await sql `
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (
-            ${customerId},
-            ${amountInCents},
-            ${status},
-            ${date}
-        )
-    `
+    // 6.將資料插入資料庫 + 操作數據庫出錯處理
+    try{
+        await sql `
+            INSERT INTO invoices (customer_id, amount, status, date)
+            VALUES (
+                ${customerId},
+                ${amountInCents},
+                ${status},
+                ${date}
+            )
+        `
+        console.log('新增成功！')
+    }catch(error){
+        console.log('新增失敗')
+        return { message: '新增失敗',}
+    }
     /* 7.更新發票路由中顯示的數據
         revalidatePath()：指定強制更新緩存的頁面。
                           資料庫更新後，/dashboard/invoices路徑將重新驗證，並且將從伺服器取得新資料
