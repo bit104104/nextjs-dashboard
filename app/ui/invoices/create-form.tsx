@@ -13,7 +13,8 @@ import { useActionState } from 'react';
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
   // 表單取得錯誤訊息
-  const initialState:State = {errors:{}, message:null}
+  const initialState:State = { message: null, errors: {} };
+  // 原本useFormState 已重新命名為 useActionState
   const [state, formAction] = useActionState(createInvoice, initialState)
   return (
     // <form action={createInvoice}>

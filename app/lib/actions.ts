@@ -30,8 +30,8 @@ const FormSchema = z.object({
     parse、safeParse：差在有錯誤時，前者會馬上報錯，後者不會馬上但會把報錯訊息返回
 */ 
 export type State = {
-    errors:{
-        cusmtomerId?:string[],
+    errors?:{
+        customerId?:string[],
         amount?:string[],
         status?:string[],
     },
