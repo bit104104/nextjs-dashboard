@@ -143,8 +143,25 @@
     =>xxx資料夾中，當有任何組件/頁面/圖層數據不存在，會導向not-found.tsx
 ### 詳見：dashboard\invoices\[id]\edit\not-found.tsx、edit\page.tsx
 
+## 4.4 表單欄位錯誤設定&顯示：
+### 大致使用如下：
+    => 基於FormSchema，建立錯誤訊息-類型描述，並export
+    => action function：
+        => 添加prevState抓取之前的狀態，並使用錯誤訊息-類型描述
+        => 創建validatedFields，用來存放CreateInvoice.safeParse
+        => 判斷驗證-失敗，返回錯誤訊息
+        => 判斷驗證-成功，解構validatedFields.data 中的表單欄位
+    =>表單調用：
+        => initialState：初始設定message、errors
+        => 使用useActionState：經過實測，React 18 or19都改用這個       
+           (useFormState已被重新命名useActionState)
+        => const [state, formAction]：useActionState(fn, initialState, permalink?)
+        => 錯誤訊息是否顯示與map，用state
+        => 表單action屬性，用formAction
 
---
+### 詳見：lib\actions.ts、ui\invoices\edit-form.tsx、create-form.tsx
+
+---
 # 其它
 ## 1.Optimizations
 ## 核心
