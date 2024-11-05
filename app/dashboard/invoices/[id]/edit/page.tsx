@@ -7,9 +7,11 @@ type PageParamsType = {
     id:string;
 }
 
-export default async function Page({params}:{params:PageParamsType}) {
+export default async function Page(props: { params: Promise<PageParamsType> }) {
  //取得發票編輯頁id、發票數據、 用戶數據
-  const {id} =  params
+  const params = await props.params;
+ console.log('props.params', params)
+  const id = params.id;
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id).catch(()=>{}), //若error，則返回undefined
     fetchCustomers()
