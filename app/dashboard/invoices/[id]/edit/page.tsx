@@ -4,15 +4,12 @@ import { fetchCustomers, fetchInvoiceById } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 
 type PageParamsType = {
-    params:{
-        id:string
-    }
+    id:string;
 }
 
-export default async function Page({params}:PageParamsType) {
+export default async function Page({params}:{params:PageParamsType}) {
  //取得發票編輯頁id、發票數據、 用戶數據
-  const { id } = await params
-  console.log('params',params)
+  const {id} =  params
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id).catch(()=>{}), //若error，則返回undefined
     fetchCustomers()
