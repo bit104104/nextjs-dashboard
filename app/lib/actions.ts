@@ -3,8 +3,10 @@
  * 'use server' 表示此檔案中，export的code，都執行在服務器端
 */ 
 'use server'
+import { signIn } from '@/auth';
 import { sql } from '@vercel/postgres';
 import { error } from 'console';
+import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 // 第三方庫：用來檢測驗證數據
@@ -138,4 +140,23 @@ export async function updateInvoice(id:string, prevState:State, formData:FormDat
 export async function deleteInvoice(id:string){
     await sql`DELETE FROM invoices WHERE id = ${id}`;
     revalidatePath('/dashboard/invoices')
+}
+
+// 登入表單的aciotn
+export async function authenticate(prevState:string|undefined, formData:FormData) {
+    try{
+        await signIn('credentials', formData)
+    }catch(error){
+        console.log('actions.ts authenticate error', error);
+        if(error instanceof AuthError){
+            switch(error.type){
+                case 'CredentialsSignin':
+                    return '登入失敗，請檢查用戶名稱'
+                default:
+                    return 'Something went wrong'
+            }
+        }
+        throw error
+    }
+    
 }

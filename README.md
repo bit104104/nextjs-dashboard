@@ -27,6 +27,9 @@
     scripts         存放腳本文件
     next.config.js  配置文件
 
+## 4.官方DEMO Login的帳密
+    Email: user@nextmail.com
+    Password: 123456
 --
 # And other points to notice,
 ## 1. research stable version, and pass the beta version, we don't use the new feat in the experimental stage.
@@ -230,9 +233,19 @@
         alt="Screenshots of the dashboard project showing mobile version"
     />
 ```
-## 2.Optimizations
+## 2.官方-教程踩坑
 ### 2.1 'use xxx' 系列
 => 寫在文件的頂部
 1. 'use client'：在客戶端渲染內容，如：選單
 2. 'use server'(默認)：在伺服器端渲染。
 3. 都不寫：默認等同'use server'
+
+### 2.2 Authentication & Authorization
+    => Authentication：身分驗證
+    => Authorization：授權，能訪問哪些頁面
+        => SOP
+            1. Login
+            2. next-auth
+            3. 中間件用next-auth
+            備註：以下檔案名稱不能隨便取，不然會導致授權功能失效
+                => auth.config.ts、auth.ts、middleware.ts
